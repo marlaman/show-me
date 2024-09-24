@@ -14,7 +14,6 @@ from flask_cors import CORS, cross_origin
 import os
 import time
 
-os.environ["OPENAI_API_KEY"] = ''
            
 llm = ChatOpenAI(model='gpt-4o-mini',temperature = 0)
 
