@@ -13,6 +13,7 @@ from flask_cors import CORS, cross_origin
 # Initialize the OpenAI Chat model
 import os
 
+os.environ["OPENAI_API_KEY"] = ''
            
 llm = ChatOpenAI(model='gpt-4o-mini',temperature = 0)
 
