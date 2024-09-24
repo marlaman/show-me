@@ -16,7 +16,7 @@ import time
 
 os.environ["OPENAI_API_KEY"] = ''
            
-llm = ChatOpenAI(model='gpt-4o-mini',temperature = 00)
+llm = ChatOpenAI(model='gpt-4o-mini',temperature = 0)
 
 
 

@@ -13,14 +13,10 @@ from flask_cors import CORS, cross_origin
 # Initialize the OpenAI Chat model
 import os
 
-os.environ["OPENAI_API_KEY"] = 'sk-proj-mtnt5y5G2U2DhczZUg6DT3BlbkFJNiSb59Zvu7ipGJ3R1anS'
+os.environ["OPENAI_API_KEY"] = ''
            
-llm = ChatOpenAI(model='gpt-4o-mini',temperature = 00)
+llm = ChatOpenAI(model='gpt-4o-mini',temperature = 0)
 
-LANGCHAIN_TRACING_V2=True
-LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
-LANGCHAIN_API_KEY="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"
-LANGCHAIN_PROJECT="pr-plaintive-succotash-73"
 
 
 
