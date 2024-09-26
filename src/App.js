@@ -19,6 +19,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import SoftwareFlowWithProvider from './SoftwareAgent.js';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import CopyButton from './components/CopyButton.js';
 
 const socket = io('http://localhost:5088');
 
@@ -416,6 +417,20 @@ const handleSubmit = async (e) => {
             }}>
               {msg.text}
             </Typography>
+            {msg.sender !== 'user' ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  paddingY: 1,
+                  ml: 0.5,
+                  color: "#555",
+                }}
+              >
+                <CopyButton text={msg.text} />
+              </Box>
+            ) : null}
           </Box>
         ))}
         {isProcessing ? (
