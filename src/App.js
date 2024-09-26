@@ -18,6 +18,7 @@ import './components/text-updater-node.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import SoftwareFlowWithProvider from './SoftwareAgent.js';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 const socket = io('http://localhost:5088');
 
@@ -235,6 +236,7 @@ function HomePage() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [questionInput, setQuestionInput] = useState('');
   const { fitView } = useReactFlow();
   const nodesInitialized = useNodesInitialized();
@@ -296,6 +298,11 @@ const handleSubmit = async (e) => {
   const handleChatSubmit = async (e) => {
     e.preventDefault();
     if (chatInput.trim()) {
+      // Add user message to chat messages
+      setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }]);
+
+      setIsProcessing(true)
+
       try {
         const response = await axios.post('http://localhost:5088/self-healing', {
           method: 'GET',
@@ -308,8 +315,6 @@ const handleSubmit = async (e) => {
         if (response.data.status === "completed") {
           console.log("Chat message processed successfully");
   
-          // Add user message to chat messages
-        setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }]);
 
         // Add backend response to chat messages (aligned left)
         setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }, { text: response.data.answer, sender: 'backend' }]);
@@ -320,6 +325,8 @@ const handleSubmit = async (e) => {
       } catch (error) {
         console.error("Error submitting chat message:", error);
       }
+
+      setIsProcessing(false)
     }
   };
 
@@ -411,6 +418,24 @@ const handleSubmit = async (e) => {
             </Typography>
           </Box>
         ))}
+        {isProcessing ? (
+          <Typography sx={{
+            textAlign: 'left',
+            color: '#999',
+            fontSize: '0.8rem',
+          }}>
+            <AutorenewIcon
+              sx={{
+                animation: 'spin 1s linear infinite',
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' },
+                },
+                fontSize: '0.8rem',
+              }}
+            /> Processing...
+          </Typography>
+        ) : null}
       </Box>
 
       {/* Input Section */}
