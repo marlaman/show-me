@@ -332,6 +332,13 @@ const handleSubmit = async (e) => {
   };
 
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      setChatInput(event.target.value)
+      handleChatSubmit(event)
+    }
+  }
 
   useEffect(() => {
     const handleUpdate = (data) => {
@@ -404,7 +411,7 @@ const handleSubmit = async (e) => {
             alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start', // Align user messages to the right
             mb: 2  // Added margin-bottom to space out the messages
           }}>
-            <Typography sx={{
+            <Typography style={{ whiteSpace: 'pre-line' }} sx={{
               textAlign: msg.sender === 'user' ? 'right' : 'left',
               color: msg.sender === 'user' ? '#1976d2' : '#333',
               backgroundColor: msg.sender === 'user' ? '#e3f2fd' : '#f0f0f0',
@@ -463,6 +470,7 @@ const handleSubmit = async (e) => {
           value={chatInput}
           maxRows={7}
           onChange={(e) => setChatInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           InputProps={{
             sx: { borderRadius: '12px' }
           }}
