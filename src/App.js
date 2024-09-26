@@ -300,7 +300,9 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     if (chatInput.trim()) {
       // Add user message to chat messages
-      setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }]);
+      const userMessage = chatInput;
+      setChatMessages([...chatMessages, { text: userMessage, sender: 'user' }]);
+      setChatInput('');
 
       setIsProcessing(true)
 
@@ -310,7 +312,7 @@ const handleSubmit = async (e) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          question: chatInput, // Send the chat input
+          question: userMessage, // Send the chat input
         });
   
         if (response.data.status === "completed") {
@@ -318,8 +320,7 @@ const handleSubmit = async (e) => {
   
 
         // Add backend response to chat messages (aligned left)
-        setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }, { text: response.data.answer, sender: 'backend' }]);
-          setChatInput(''); // Clear input field
+        setChatMessages([...chatMessages, { text: userMessage, sender: 'user' }, { text: response.data.answer, sender: 'backend' }]);
         } else {
           console.error("Unexpected response from server");
         }
