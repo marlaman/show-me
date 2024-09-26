@@ -18,6 +18,8 @@ import './components/text-updater-node.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import SoftwareFlowWithProvider from './SoftwareAgent.js';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import CopyButton from './components/CopyButton.js';
 
 const socket = io('http://localhost:5088');
 
@@ -235,6 +237,7 @@ function HomePage() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [questionInput, setQuestionInput] = useState('');
   const { fitView } = useReactFlow();
   const nodesInitialized = useNodesInitialized();
@@ -296,34 +299,47 @@ const handleSubmit = async (e) => {
   const handleChatSubmit = async (e) => {
     e.preventDefault();
     if (chatInput.trim()) {
+      // Add user message to chat messages
+      const userMessage = chatInput;
+      setChatMessages([...chatMessages, { text: userMessage, sender: 'user' }]);
+      setChatInput('');
+
+      setIsProcessing(true)
+
       try {
         const response = await axios.post('http://localhost:5088/self-healing', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          question: chatInput, // Send the chat input
+          question: userMessage, // Send the chat input
         });
   
         if (response.data.status === "completed") {
           console.log("Chat message processed successfully");
   
-          // Add user message to chat messages
-        setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }]);
 
         // Add backend response to chat messages (aligned left)
-        setChatMessages([...chatMessages, { text: chatInput, sender: 'user' }, { text: response.data.answer, sender: 'backend' }]);
-          setChatInput(''); // Clear input field
+        setChatMessages([...chatMessages, { text: userMessage, sender: 'user' }, { text: response.data.answer, sender: 'backend' }]);
         } else {
           console.error("Unexpected response from server");
         }
       } catch (error) {
         console.error("Error submitting chat message:", error);
       }
+
+      setIsProcessing(false)
     }
   };
 
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      setChatInput(event.target.value)
+      handleChatSubmit(event)
+    }
+  }
 
   useEffect(() => {
     const handleUpdate = (data) => {
@@ -396,7 +412,7 @@ const handleSubmit = async (e) => {
             alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start', // Align user messages to the right
             mb: 2  // Added margin-bottom to space out the messages
           }}>
-            <Typography sx={{
+            <Typography style={{ whiteSpace: 'pre-line' }} sx={{
               textAlign: msg.sender === 'user' ? 'right' : 'left',
               color: msg.sender === 'user' ? '#1976d2' : '#333',
               backgroundColor: msg.sender === 'user' ? '#e3f2fd' : '#f0f0f0',
@@ -409,18 +425,53 @@ const handleSubmit = async (e) => {
             }}>
               {msg.text}
             </Typography>
+            {msg.sender !== 'user' ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                  paddingY: 1,
+                  ml: 0.5,
+                  color: "#555",
+                }}
+              >
+                <CopyButton text={msg.text} />
+              </Box>
+            ) : null}
           </Box>
         ))}
+        {isProcessing ? (
+          <Typography sx={{
+            textAlign: 'left',
+            color: '#999',
+            fontSize: '0.8rem',
+          }}>
+            <AutorenewIcon
+              sx={{
+                animation: 'spin 1s linear infinite',
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' },
+                },
+                fontSize: '0.8rem',
+              }}
+            /> Processing...
+          </Typography>
+        ) : null}
       </Box>
 
       {/* Input Section */}
       <Box component="form" onSubmit={handleChatSubmit} sx={{ p: 2, borderTop: '1px solid #e0e0e0', backgroundColor: '#fafafa' }}>
         <TextField
+          multiline
           fullWidth
           variant="outlined"
           placeholder="Type your message..."
           value={chatInput}
+          maxRows={7}
           onChange={(e) => setChatInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           InputProps={{
             sx: { borderRadius: '12px' }
           }}
