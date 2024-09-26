@@ -1,0 +1,10 @@
+langchain
+langchain_openai
+pandas
+numpy
+Flask
+Flask-SocketIO
+Flask-CORS
+requests
+matplotlib
+pillow
