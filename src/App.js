@@ -456,10 +456,12 @@ const handleSubmit = async (e) => {
       {/* Input Section */}
       <Box component="form" onSubmit={handleChatSubmit} sx={{ p: 2, borderTop: '1px solid #e0e0e0', backgroundColor: '#fafafa' }}>
         <TextField
+          multiline
           fullWidth
           variant="outlined"
           placeholder="Type your message..."
           value={chatInput}
+          maxRows={7}
           onChange={(e) => setChatInput(e.target.value)}
           InputProps={{
             sx: { borderRadius: '12px' }
