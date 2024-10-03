@@ -51,7 +51,7 @@ def task_complexity_check(task, main_task):
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You will be given a sub-task, and the main task for context. (Assume the sub-task is the main task if no main task is given)
 
-        Your one and only goal is to determine if the task in hand is meant for multi-step reasoning or can be answered immediately using the infornation
+        Your one and only goal is to determine if the task in hand is meant for multi-step reasoning or can be answered immediately using the information
  
         
          Here are some tips that will help you make a decision:
